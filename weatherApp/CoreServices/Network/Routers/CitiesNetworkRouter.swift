@@ -11,12 +11,15 @@ import Alamofire
 enum CitiesNetworkRouter: URLRequestConvertible {
     case getForcast(city: String)
     case autocomplete(text: String)
+    case getCityWeather(city: String)
 
     var method: HTTPMethod {
         switch self {
         case .getForcast:
             return .get
         case .autocomplete:
+            return .get
+        case .getCityWeather:
             return .get
         }
     }
@@ -27,6 +30,8 @@ enum CitiesNetworkRouter: URLRequestConvertible {
             return ["key": Constants.aPiKey, "q": city, "days": "3"]
         case .autocomplete(let text):
             return ["key": Constants.aPiKey, "q": text]
+        case .getCityWeather(let city):
+            return ["q": city, "appid": Constants.aPiKey]
         }
     }
 
@@ -41,6 +46,8 @@ enum CitiesNetworkRouter: URLRequestConvertible {
             return "forecast.json"
         case .autocomplete:
             return "search.json"
+        case .getCityWeather:
+            return "/weather"
         }
     }
 

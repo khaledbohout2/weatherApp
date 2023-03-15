@@ -14,8 +14,8 @@ extension CitySelectorVC: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CityCell = tableView.forceDequeueCell(identifier: CityCell.identifier)
+        cell.displayTitle(text: viewModel.cities[indexPath.row].name)
         return cell
     }
-
 
 }

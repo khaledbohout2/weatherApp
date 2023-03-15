@@ -20,16 +20,19 @@ enum CitySelectorViewModelError: Error, Equatable {
 
 final class CitySelectorViewModel: ObservableObject {
 
-    private var citiesRepository: CitiesRepositoryDelegate
+    private var citiesRepository: WeatherRepositoryDelegate
     @Published var cities = [City]()
     @Published private(set) var state: CitySelectorViewModelState = .loading
+    private var cancellables = Set<AnyCancellable>()
 
-    init(citiesRepository: CitiesRepositoryDelegate) {
+    init(citiesRepository: WeatherRepositoryDelegate) {
         self.citiesRepository = citiesRepository
         getCities()
     }
 
     func getCities() {
-
+        state = .loading
+        cities = citiesRepository.getCities()
     }
+
 }

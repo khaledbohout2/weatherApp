@@ -12,11 +12,11 @@ class CitySelectorVC: BaseVC<TableView> {
 
     var viewModel: CitySelectorViewModel
     var coordinator: MainCoordinator
-    private var repository: CitiesRepositoryDelegate
+    private var repository: WeatherRepositoryDelegate
     private var cancellables: Set<AnyCancellable> = []
 
     init(viewModel: CitySelectorViewModel,
-         repository: CitiesRepositoryDelegate,
+         repository: WeatherRepositoryDelegate,
          coordinator: MainCoordinator) {
         self.viewModel = viewModel
         self.coordinator = coordinator

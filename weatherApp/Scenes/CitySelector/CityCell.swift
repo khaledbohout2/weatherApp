@@ -26,4 +26,9 @@ class CityCell: UITableViewCell {
         selectionStyle = .none
         accessoryType = .disclosureIndicator
     }
+
+    func displayTitle(text: String) {
+        titleLbl.text = text
+    }
+
 }
