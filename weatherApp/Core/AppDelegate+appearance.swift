@@ -18,19 +18,19 @@ extension AppDelegate {
             let navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.titleTextAttributes = [
-                .foregroundColor: UIColor.black,
-                .font: UIFont.systemFont(ofSize: 22)
+                .foregroundColor: UIColor.appMainText,
+                .font: UIFont.systemFont(ofSize: 24)
             ]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.appMainText]
             navBarAppearance.shadowColor = .clear
-            navBarAppearance.backgroundColor = .white
+            navBarAppearance.backgroundColor = .appBackground
             UINavigationBar.appearance().standardAppearance = navBarAppearance
             UINavigationBar.appearance().compactAppearance = navBarAppearance
             UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         } else {
-            UINavigationBar.appearance().tintColor = .black
+            UINavigationBar.appearance().tintColor = .appMainText
             UINavigationBar.appearance().shadowImage = UIImage()
-            UINavigationBar.appearance().backgroundColor = .white
+            UINavigationBar.appearance().backgroundColor = UIColor.appBackground
         }
         UINavigationBar.appearance().isTranslucent = false
     }

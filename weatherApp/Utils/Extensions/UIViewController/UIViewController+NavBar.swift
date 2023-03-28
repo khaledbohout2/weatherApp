@@ -8,9 +8,9 @@
 import UIKit
 
 extension UIViewController {
-    func addShareNavButton() -> UIButton {
+    func addPlusNavButton() -> UIButton {
         let button = UIButton()
-        button.setImage(UIImage(named: "share"), for: .normal)
+        button.setImage(UIImage(systemName: "plus.square"), for: .normal)
         let menuBarItem = UIBarButtonItem(customView: button)
         var topParent: UIViewController = self
         while topParent.parent != nil,

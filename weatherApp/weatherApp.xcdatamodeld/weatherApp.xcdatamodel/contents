@@ -2,12 +2,15 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CityCoreDataEntity" representedClassName=".CityCoreDataEntity" isAbstract="YES" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="weatherInfo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WeatherInfoCoreDataEntity"/>
+        <relationship name="weatherInfo" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WeatherInfoCoreDataEntity" inverseName="city" inverseEntity="WeatherInfoCoreDataEntity"/>
     </entity>
     <entity name="WeatherInfoCoreDataEntity" representedClassName=".WeatherInfoCoreDataEntity" isAbstract="YES" syncable="YES" codeGenerationType="class">
-        <attribute name="humidity" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="temp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="humidity" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="iconID" optional="YES" attributeType="String"/>
+        <attribute name="temp" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="weatherDescription" optional="YES" attributeType="String"/>
-        <attribute name="windSpeed" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="windSpeed" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="city" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CityCoreDataEntity" inverseName="weatherInfo" inverseEntity="CityCoreDataEntity"/>
     </entity>
 </model>

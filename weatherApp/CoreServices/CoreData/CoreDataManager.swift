@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Combine
 
 final class CoreDataManager {
 
@@ -48,40 +49,85 @@ final class CoreDataManager {
         return persistentStoreCoordinator
     }()
 
-    func getAllCities() throws -> [City]{
+    func getAllCities() throws -> AnyPublisher<[City], Error>{
         let request = CityCoreDataEntity.fetchRequest()
         let cities = try managedObjectContext.fetch(request)
-        return cities.map { city in
-            let weather = city.weatherInfo as! Set<WeatherInfoCoreDataEntity>
-            return City(weatherInfo: weather.map({ weatherCoreData in
-                WeatherInfo(windSpeed: weatherCoreData.windSpeed, WeatherDescription: weatherCoreData.weatherDescription ?? "", temp: weatherCoreData.temp, humidity: weatherCoreData.humidity)
-            }))
+        do {
+            let citiesArr = cities.map { city in
+                let weather = city.weatherInfo as! Set<WeatherInfoCoreDataEntity>
+                return City(name: city.name ?? "", weatherInfo: weather.map({ weatherCoreData in
+                    WeatherInfo(windSpeed: Int(weatherCoreData.windSpeed), WeatherDescription: weatherCoreData.weatherDescription ?? "", temp: Int(weatherCoreData.temp), humidity: Int(weatherCoreData.humidity), iconID: weatherCoreData.iconID ?? "", date: weatherCoreData.date ?? "")
+                }))
+            }
+            return Just(citiesArr).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
     }
 
-    func update(id: UUID, city: City) throws -> (){
-        let cityCoreDataEntity = try getEntityById(id)
-//        todoCoreDataEntity.is_completed = todo.isCompleted
-//        todoCoreDataEntity.title = todo.title
+    func update(city: City) throws -> (){
+        do {
+            let cityCoreDataEntity = try getEntityByName(city.name)
+            if cityCoreDataEntity != nil {
+                for weather in city.weatherInfo {
+                    let weatherCoreData = WeatherInfoCoreDataEntity(context: managedObjectContext)
+                    weatherCoreData.date = weather.date
+                    weatherCoreData.temp = Int16(weather.temp)
+                    weatherCoreData.iconID = weather.iconID
+                    weatherCoreData.humidity = Int16(weather.humidity)
+                    weatherCoreData.weatherDescription = weather.WeatherDescription
+                    weatherCoreData.windSpeed = Int16(weather.windSpeed)
+                    cityCoreDataEntity?.addToWeatherInfo(weatherCoreData)
+                    saveContext()
+                }
+            } else {
+                try create(city: city)
+            }
+        }
+    }
+
+    func create(city: City) throws -> (){
+        let cityCoreDataEntity = CityCoreDataEntity(context: managedObjectContext)
+        cityCoreDataEntity.name = city.name
+        var weatherInfoSet = Set<WeatherInfoCoreDataEntity>()
+        for weather in city.weatherInfo {
+            let weatherCoreData = WeatherInfoCoreDataEntity(context: managedObjectContext)
+            weatherCoreData.date = weather.date
+            weatherCoreData.temp = Int16(weather.temp)
+            weatherCoreData.iconID = weather.iconID
+            weatherCoreData.humidity = Int16(weather.humidity)
+            weatherCoreData.weatherDescription = weather.WeatherDescription
+            weatherCoreData.windSpeed = Int16(weather.windSpeed)
+            weatherInfoSet.insert(weatherCoreData)
+        }
+        cityCoreDataEntity.weatherInfo = weatherInfoSet as NSSet
         saveContext()
     }
 
-    func create(todo: City) throws -> (){
-        let todoCoreDataEntity = CityCoreDataEntity(context: managedObjectContext)
-//        todoCoreDataEntity.is_completed = todo.isCompleted
-//        todoCoreDataEntity.title = todo.title
-//        todoCoreDataEntity.id = todo.id
-        saveContext()
-    }
-
-    private func getEntityById(_ id: UUID)  throws  -> CityCoreDataEntity?{
+    private func getEntityByName(_ name: String) throws  -> CityCoreDataEntity?{
         let request = CityCoreDataEntity.fetchRequest()
         request.fetchLimit = 1
         request.predicate = NSPredicate(
-            format: "id = %@", id.uuidString)
-        let cityCoreDataEntity = try managedObjectContext.fetch(request)[0]
-        return cityCoreDataEntity
+            format: "name = %@", name)
+        let cityCoreDataEntity = try managedObjectContext.fetch(request)
+        if cityCoreDataEntity.count > 0 {
+            return cityCoreDataEntity[0]
+        } else {
+            return nil
+        }
+    }
 
+    func getCityHistory(cityName: String) -> AnyPublisher<[WeatherInfo], Error> {
+        do {
+            let city = try getEntityByName(cityName)
+            let weather = city?.weatherInfo as! Set<WeatherInfoCoreDataEntity>
+            let weatherArr = weather.map { weather in
+                WeatherInfo(windSpeed: Int(weather.windSpeed), WeatherDescription: weather.weatherDescription ?? "", temp: Int(weather.temp), humidity: Int(weather.temp), iconID: weather.iconID ?? "", date: weather.date ?? "")
+            }
+            print(weatherArr.count)
+            return Just(weatherArr).setFailureType(to: Error.self).eraseToAnyPublisher()
+        } catch {
+            return Fail(error: CityHistoryVCViewModelError.weathersFetch)
+                .eraseToAnyPublisher()
+        }
     }
 
     private func saveContext(){

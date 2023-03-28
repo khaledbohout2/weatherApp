@@ -9,7 +9,7 @@ import UIKit
 import SDWebImage
 
 extension UIImageView {
-    func load(with url: String, placeHolder: UIImage?) {
+    func load(with url: String, placeHolder: UIImage? = nil) {
         guard let url = URL(string: url) else { return }
         self.sd_imageIndicator = SDWebImageActivityIndicator.gray
         self.sd_setImage(with: url,

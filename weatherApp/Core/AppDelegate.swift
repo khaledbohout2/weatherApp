@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navController = UINavigationController()
         let coordinator = MainCoordinator(navigationController: navController)
         coordinator.start()
+        window?.rootViewController = navController
         window?.makeKeyAndVisible()
 
         return true
