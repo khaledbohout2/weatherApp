@@ -39,7 +39,7 @@ It also adheres to **Clean Architecture**, utilizing use cases and repositories 
     git clone [repository_url]
     cd [project_directory]
     ```
-2.  Open the project in Xcode (likely a `.xcodeproj` or `.xcworkspace` file).
+2.  Open the project in Xcode (`.xcworkspace` file).
 3.  Build and run the application on a simulator or a physical iOS device.
 
 ## Contributing
